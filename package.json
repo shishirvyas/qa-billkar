@@ -5,6 +5,12 @@
   "private": true,
   "type": "module",
   "scripts": {
+    "start": "node scripts/start.mjs",
+    "start:full": "node scripts/start.mjs --mode full",
+    "start:headed": "node scripts/start.mjs --mode headed",
+    "start:ai": "node scripts/start.mjs --mode ai",
+    "start:billing": "node scripts/start.mjs --mode billing",
+    "start:noapp": "node scripts/start.mjs --no-app",
     "test": "playwright test",
     "test:headed": "playwright test --headed",
     "test:ui": "playwright test --ui",
