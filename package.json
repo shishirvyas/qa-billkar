@@ -1,0 +1,29 @@
+{
+  "name": "qa-billkar",
+  "version": "1.0.0",
+  "description": "Production-grade autonomous QA system for Billkar",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "playwright test",
+    "test:headed": "playwright test --headed",
+    "test:ui": "playwright test --ui",
+    "test:debug": "playwright test --debug",
+    "test:billing": "playwright test tests/billing.spec.ts",
+    "test:inventory": "playwright test tests/inventory.spec.ts",
+    "test:auth": "playwright test tests/auth.spec.ts",
+    "test:sync": "playwright test tests/sync.spec.ts",
+    "test:reports": "playwright test tests/reports.spec.ts",
+    "test:permissions": "playwright test tests/permissions.spec.ts",
+    "test:ci": "playwright test --reporter=github,html,json",
+    "test:nightly": "playwright test --reporter=html,json && node reporter/generateDashboard.mjs",
+    "dashboard": "node reporter/generateDashboard.mjs",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {},
+  "devDependencies": {
+    "@playwright/test": "^1.44.0",
+    "@types/node": "^20.0.0",
+    "typescript": "^5.4.0"
+  }
+}

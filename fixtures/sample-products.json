@@ -1,0 +1,46 @@
+[
+  {
+    "id": "prod-001",
+    "name": "Basmati Rice 1kg",
+    "sku": "RICE-BAS-1KG",
+    "category": "Grains",
+    "price": 120.00,
+    "unit": "kg",
+    "stock": 200,
+    "taxRate": 5,
+    "barcode": "8901234567890"
+  },
+  {
+    "id": "prod-002",
+    "name": "Toor Dal 500g",
+    "sku": "DAL-TOOR-500G",
+    "category": "Pulses",
+    "price": 75.00,
+    "unit": "g",
+    "stock": 150,
+    "taxRate": 5,
+    "barcode": "8901234567891"
+  },
+  {
+    "id": "prod-003",
+    "name": "Sunflower Oil 1L",
+    "sku": "OIL-SF-1L",
+    "category": "Oils",
+    "price": 180.00,
+    "unit": "L",
+    "stock": 80,
+    "taxRate": 18,
+    "barcode": "8901234567892"
+  },
+  {
+    "id": "prod-004",
+    "name": "Sugar 1kg",
+    "sku": "SUGAR-1KG",
+    "category": "Sweeteners",
+    "price": 45.00,
+    "unit": "kg",
+    "stock": 300,
+    "taxRate": 5,
+    "barcode": "8901234567893"
+  }
+]

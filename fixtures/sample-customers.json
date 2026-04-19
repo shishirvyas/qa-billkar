@@ -1,0 +1,32 @@
+[
+  {
+    "id": "cust-001",
+    "name": "Ramesh Kumar",
+    "phone": "9876543210",
+    "email": "ramesh.kumar@example.com",
+    "address": "12, MG Road, Bengaluru, KA 560001",
+    "gstin": "29ABCDE1234F1Z5",
+    "creditLimit": 10000,
+    "outstandingBalance": 0
+  },
+  {
+    "id": "cust-002",
+    "name": "Priya Sharma",
+    "phone": "9123456780",
+    "email": "priya.sharma@example.com",
+    "address": "45, Park Street, Kolkata, WB 700016",
+    "gstin": null,
+    "creditLimit": 5000,
+    "outstandingBalance": 1200
+  },
+  {
+    "id": "cust-003",
+    "name": "Suresh Traders",
+    "phone": "9988776655",
+    "email": "suresh.traders@example.com",
+    "address": "78, Anna Salai, Chennai, TN 600002",
+    "gstin": "33XYZPQ5678G2A1",
+    "creditLimit": 50000,
+    "outstandingBalance": 8500
+  }
+]

@@ -1,0 +1,30 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+
+# Playwright artifacts
+reports/playwright-html/
+reports/screenshots/
+reports/dashboard/
+reports/results.json
+reports/results.xml
+reports/run-meta.json
+test-results/
+playwright-report/
+
+# Auth state (contains tokens — never commit)
+setup/auth-states/
+
+# Environment
+.env
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.suo
+*.user
