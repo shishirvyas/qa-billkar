@@ -194,6 +194,27 @@ export const CTX_CASHIER = {
   ],
 };
 
+export const CTX_MANAGER = {
+  userId:     "u-manager",
+  tenantId:   "t-1",
+  tenantSlug: "acme",
+  storeId:    "s-1",
+  deviceId:   "d-3",
+  role:       "MANAGER",
+  permissions: [
+    "dashboard:view",
+    "customers:view",   "customers:create", "customers:edit",   "customers:export",
+    "products:view",    "products:create",  "products:edit",    "products:export",
+    "invoices:view",    "invoices:create",  "invoices:edit",    "invoices:void",    "invoices:export",
+    "returns:view",     "returns:create",   "returns:approve",
+    "discounts:apply",  "discounts:override",
+    "collections:view", "collections:record",
+    "reports:view",     "reports:export",
+    "settings:view",
+    "inventory:view",   "inventory:export",
+  ],
+};
+
 export const CTX_TENANT_B = {
   ...CTX_ADMIN,
   userId:     "u-admin-b",

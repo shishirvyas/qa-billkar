@@ -35,8 +35,9 @@ export default defineConfig({
   reporter: [
     process.env.CI ? ["github"] : ["list"],
     ["html",  { outputFolder: "reports/playwright-html", open: "never" }],
-    ["json",  { outputFile:   "reports/results.json" }],
+    ["json",  { outputFile:   "test-results/results.json" }],
     ["junit", { outputFile:   "reports/results.xml" }],
+    ...(process.env.ALLURE ? [["allure-playwright"] as [string]] : []),
   ],
 
   // ── Global browser defaults ────────────────────────────────────────────────
@@ -71,13 +72,13 @@ export default defineConfig({
       name:         "chromium:manager",
       use:          { ...devices["Desktop Chrome"], storageState: "setup/auth-states/manager.json" },
       dependencies: ["setup:auth"],
-      testMatch:    "**/permissions.spec.ts",
+      testMatch:    "**/{permissions,rbac,tenant}.spec.ts",
     },
     {
       name:         "chromium:cashier",
       use:          { ...devices["Desktop Chrome"], storageState: "setup/auth-states/cashier.json" },
       dependencies: ["setup:auth"],
-      testMatch:    "**/permissions.spec.ts",
+      testMatch:    "**/{permissions,rbac,tenant}.spec.ts",
     },
   ],
 
