@@ -48,8 +48,6 @@ export default defineConfig({
     trace:             "on-first-retry",
     actionTimeout:     12_000,
     navigationTimeout: 25_000,
-    // All screenshots land in reports/screenshots/
-    screenshotPath:    "reports/screenshots",
   },
 
   // ── Projects (roles) ──────────────────────────────────────────────────────

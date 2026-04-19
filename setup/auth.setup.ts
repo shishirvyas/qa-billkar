@@ -13,8 +13,8 @@
 import { test as setup, expect } from "@playwright/test";
 import path from "path";
 import { fileURLToPath } from "url";
-import { buildBridgeMock } from "./bridgeSeed.js";
-import { ROLE_CONTEXTS } from "./roleContexts.js";
+import { injectBridge } from "../helpers/bridge.js";
+import { ROLE_CONTEXTS } from "./bridgeSeed.js";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -26,7 +26,7 @@ for (const [role, ctx] of Object.entries(ROLE_CONTEXTS)) {
     );
 
     // Inject the bridge mock with the specific role context
-    await page.addInitScript(buildBridgeMock(ctx));
+    await injectBridge(page, { ctx });
 
     await page.goto("/");
     // Wait for the app shell to render (sidebar or main nav)
