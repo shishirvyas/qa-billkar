@@ -1,0 +1,130 @@
+name: Billkar QA — Nightly & PR
+
+on:
+  # Nightly run at 02:00 UTC (07:30 IST)
+  schedule:
+    - cron: "0 2 * * *"
+
+  # Run on every PR targeting main/develop
+  pull_request:
+    branches: [main, develop]
+
+  # Allow manual trigger with optional test filter
+  workflow_dispatch:
+    inputs:
+      grep:
+        description: "Filter tests by name (e.g. T05)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+  checks: write
+  pull-requests: write
+
+env:
+  NODE_VERSION: "20"
+  QA_BASE_URL: "http://localhost:5173"
+
+jobs:
+  qa:
+    name: "QA — ${{ matrix.project }}"
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    strategy:
+      fail-fast: false
+      matrix:
+        project: [chromium:admin, chromium:manager, chromium:cashier]
+
+    steps:
+      # ── Checkout ─────────────────────────────────────────────────────────
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Node + cache ──────────────────────────────────────────────────────
+      - name: Setup Node.js ${{ env.NODE_VERSION }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ env.NODE_VERSION }}
+          cache: npm
+          cache-dependency-path: |
+            qa-billkar/package-lock.json
+            biilkar/package-lock.json
+
+      # ── Install QA deps ───────────────────────────────────────────────────
+      - name: Install QA dependencies
+        working-directory: qa-billkar
+        run: npm ci
+
+      # ── Install Playwright browsers ────────────────────────────────────
+      - name: Install Playwright browsers
+        working-directory: qa-billkar
+        run: npx playwright install --with-deps chromium
+
+      # ── Install app deps & build ──────────────────────────────────────
+      - name: Install app dependencies
+        working-directory: biilkar
+        run: npm ci
+
+      # ── Start Vite dev server (background) ────────────────────────────
+      - name: Start Vite dev server
+        working-directory: biilkar
+        run: npm run dev:web --workspace=@biilkar/desktop &
+        env:
+          NODE_ENV: test
+
+      # ── Wait for server ───────────────────────────────────────────────
+      - name: Wait for Vite server
+        run: npx wait-on http://localhost:5173 --timeout 60000
+
+      # ── Run tests ─────────────────────────────────────────────────────
+      - name: Run Playwright tests (${{ matrix.project }})
+        working-directory: qa-billkar
+        run: |
+          GREP="${{ github.event.inputs.grep }}"
+          if [ -n "$GREP" ]; then
+            npx playwright test --project="${{ matrix.project }}" --grep="$GREP"
+          else
+            npx playwright test --project="${{ matrix.project }}"
+          fi
+        env:
+          CI: true
+          QA_BASE_URL: ${{ env.QA_BASE_URL }}
+          QA_TENANT_ID: t-1
+          QA_TENANT_SLUG: acme
+          QA_STORE_ID: s-1
+
+      # ── Generate dashboard ────────────────────────────────────────────
+      - name: Generate HTML dashboard
+        if: always()
+        working-directory: qa-billkar
+        run: node reporter/generateDashboard.mjs || true
+
+      # ── Upload reports ────────────────────────────────────────────────
+      - name: Upload Playwright HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report-${{ matrix.project }}-${{ github.run_number }}
+          path: qa-billkar/reports/
+          retention-days: 30
+
+      # ── Upload JUnit for PR annotations ──────────────────────────────
+      - name: Publish test results
+        if: always()
+        uses: EnricoMi/publish-unit-test-result-action@v2
+        with:
+          files: qa-billkar/reports/results.xml
+          check_name: "QA Results — ${{ matrix.project }}"
+
+  # ── Notify on nightly failure ─────────────────────────────────────────────
+  notify-failure:
+    name: Notify nightly failure
+    runs-on: ubuntu-latest
+    needs: qa
+    if: failure() && github.event_name == 'schedule'
+    steps:
+      - name: Post failure summary
+        run: |
+          echo "::error::Nightly QA run failed. Check workflow run ${{ github.run_id }} for details."
