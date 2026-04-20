@@ -272,7 +272,67 @@ export async function injectBridge(page: Page, opts: BridgeOpts = {}): Promise<v
 
       // ── apiFetch mock ──────────────────────────────────────────────────────
       apiFetch: async (_method: string, path: string) => {
-        return { ok: true, status: 200, body: { path } };
+        if (path === "/bootstrap") {
+          const bootstrapBody = {
+            bootstrap: {
+              session: {
+                userId:      d.ctx.userId,
+                name:        "QA Test User",
+                email:       "qa@biilkar.test",
+                role:        d.ctx.role,
+                orgId:       d.ctx.tenantId,
+                orgSlug:     d.ctx.tenantSlug ?? "qa-tenant",
+                orgName:     "QA Tenant",
+                storeId:     d.ctx.storeId,
+                storeName:   "QA Store",
+                permissions: d.ctx.permissions,
+              },
+              organization: {
+                id:               d.ctx.tenantId,
+                slug:             d.ctx.tenantSlug ?? "qa-tenant",
+                name:             "QA Tenant",
+                subscriptionPlan: "GROWTH",
+                active:           true,
+              },
+              store: {
+                id:     d.ctx.storeId,
+                orgId:  d.ctx.tenantId,
+                code:   "QA-01",
+                name:   "QA Store",
+                city:   "Test City",
+                active: true,
+              },
+              settings: {
+                currencyCode:             "INR",
+                invoicePrefix:            "INV-QA",
+                paymentReminderEnabled:   true,
+                emailEnabled:             true,
+                smsEnabled:               true,
+                whatsappEnabled:          true,
+              },
+              modules: [
+                { id: "dashboard",   group: "core",    label: "Dashboard",   description: "" },
+                { id: "customers",   group: "sales",   label: "Customers",   description: "" },
+                { id: "products",    group: "catalog", label: "Products",    description: "" },
+                { id: "invoices",    group: "billing", label: "Invoices",    description: "" },
+                { id: "collections", group: "billing", label: "Collections", description: "" },
+                { id: "reports",     group: "reports", label: "Reports",     description: "" },
+                { id: "settings",    group: "admin",   label: "Settings",    description: "" },
+              ],
+              metrics: {
+                customers:         0,
+                products:          0,
+                draftInvoices:     0,
+                outstandingAmount: 0,
+              },
+            },
+            customers: [],
+            products:  [],
+            cursor:    "qa-bootstrap-cursor",
+          };
+          return { ok: true, status: 200, body: bootstrapBody };
+        }
+        return { ok: true, status: 200, body: {} };
       },
 
       // ── Auth ──────────────────────────────────────────────────────────────
@@ -787,6 +847,14 @@ export async function injectBridge(page: Page, opts: BridgeOpts = {}): Promise<v
         markOnline:   async () => undefined,
         healthLogs:   async () => [],
         diagnostics:  async () => ({ pending: d.syncPending, failed: d.syncFailed }),
+      },
+
+      // ── Platform Admin ────────────────────────────────────────────────────
+      platform: {
+        ctx:    async () => null,   // null = not a platform admin; app shows PlatformLoginScreen
+        login:  async (_email: string, _password: string) => null,
+        logout: async () => undefined,
+        fetch:  async (_method: string, _path: string, _body?: unknown) => ({ ok: true, status: 200, body: {} }),
       },
 
       // ── Print / PDF ───────────────────────────────────────────────────────
